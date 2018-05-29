@@ -2,6 +2,16 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 
+def get_max_close(symbol):
+    '''Return the maximum closing value for stock indicated by symbol.'''
+    df = pd.read_csv("data/{}.csv".format(symbol)) # read in data
+    return df['Close'].max() # compute and return max
+
+def get_mean_volume(symbol):
+    '''Return the mean volume for stock indicated by symbol.'''
+    df = pd.read_csv("data/{}.csv".format(symbol))
+    return df['Volume'].mean()
+
 def get_data(symbols, dates):
     """Read stock data (adjusted close) for given symbols from CSV files."""
     df = pd.DataFrame(index=dates)
@@ -37,6 +47,24 @@ def plot_data(df, title="Stock prices"):
     ax.set_ylabel("Price")
     plt.show()
 
+def test_run_mc1p1():
+    df = pd.read_csv("data/AAPL.csv")
+    # Print the last 5 rows of the data frame
+    # print df.tail(5)
+    # print df[10:21]
+    # for symbol in ['AAPL', 'IBM']:
+    #     # print "Max close"
+    #     # print symbol, get_max_close(symbol)
+    #     print "Mean volume"
+    #     print symbol, get_mean_volume(symbol)
+    # df = pd.read_csv("data/IBM.csv")
+    # print df['Adj Close']
+    # print df['High']
+    # df['Adj Close'].plot()
+    # df['High'].plot()
+    df[['Close', 'Adj Close']].plot()
+    plt.show()
+
 def test_run_mc1p2():
     # Define a date range
     dates = pd.date_range('2010-01-01', '2010-12-31')
@@ -62,4 +90,5 @@ def test_run_mc1p2():
 
 
 if __name__ == '__main__':
-    test_run_mc1p2()
+    test_run_mc1p1()
+    # test_run_mc1p2()
