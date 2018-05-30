@@ -30,8 +30,7 @@ def get_data(symbols, dates):
         df_temp = df_temp.rename(columns={'Adj Close':symbol})
         df = df.join(df_temp)
         if symbol == 'SPY':
-            df = df.dropna()
-
+            df = df.dropna()    
     return df
 
 def plot_selected(df, columns, start_index, end_index):
@@ -70,6 +69,28 @@ def manual_mean(arr):
 
 def numpy_mean(arr):
     return arr.mean()
+
+def get_rolling_mean(values, window):
+    """Return rolling mean of given values, using specified window size."""
+    return pd.rolling_mean(values, window=window)
+
+def get_rolling_std(values, window):
+    """Return rolling mean of given values, using specified window size."""
+    return pd.rolling_std(values, window=window)
+
+def get_bollinger_bands(rm, rstd):
+    """Return upper and lower Bollinger Bands."""
+    upper_band = rm + rstd * 2
+    lower_band = rm - rstd * 2
+    return upper_band, lower_band
+
+def compute_daily_returns(df):
+    """ Compute and return daily return values."""
+    daily_returns = df.copy()
+    # computer daily returns for row 1 onwards
+    daily_returns[1:] = (df[1:]/df[:-1].values)-1
+    daily_returns.ix[0, :] = 0
+    return daily_returns
 
 def test_run_mc1p1():
     df = pd.read_csv("data/AAPL.csv")
@@ -224,8 +245,55 @@ def test_run_mc1p3():
     # Multiply the two arrays
     print "\nAdd a * b:\n", a * b
 
+def test_run_mc1p4():
+    # # Read data
+    # dates = pd.date_range('2010-01-01', '2010-12-31')
+    # symbols = ['GOOG', 'IBM', 'GLD']
+    # df = get_data(symbols, dates)
+    # plot_data(df)
+
+    # # Compute global statistics for each stock
+    # print df.mean()
+    # print df.std()
+
+    # Read data
+    dates = pd.date_range('2012-07-01', '2012-07-31')
+    symbols = ['SPY', 'XOM']
+    df = get_data(symbols, dates)
+
+    # Plot SPY data, retain matplotlib axis object
+    # ax = df['SPY'].plot(title="SPY rolling mean", label="SPY")
+    # Compute the rolling mean using a 20-day window
+    # rm_SPY = pd.rolling_mean(df['SPY'], window=20)
+    # # Add rolling mean to same plot
+    # rm_SPY.plot(label='Rolling mean', ax=ax) # add to the existing plot
+    
+    # # Add axis labels and legend
+    # ax.set_xlabel("Date")
+    # ax.set_ylabel("Price")
+    # ax.legend(loc='upper left')
+    # plt.show()
+    # 1. Compute rolling mean
+    # rm_SPY = get_rolling_mean(df['SPY'], window=20)
+
+    # # 2. Compute rolling standard deviation
+    # rstd_SPY = get_rolling_std(df['SPY'], window=20)
+
+    # # 3. Compute upper and lower bands
+    # upper_band, lower_band = get_bollinger_bands(rm_SPY, rstd_SPY)
+
+    # # Plot raw SPY values, rolling mean and Bollinger Bands
+    # ax = df['SPY'].plot(title="Bollinger Bands", label="SPY")
+    # # Add rolling mean to same plot
+    # rm_SPY.plot(label='Rolling mean', ax=ax) # add to the existing plot
+    # upper_band.plot(label='Upper band', ax=ax)
+    # lower_band.plot(label='lower band', ax=ax)
+    # plt.show()
+    daily_returns = compute_daily_returns(df)
+    plot_data(daily_returns)
 
 if __name__ == '__main__':
     # test_run_mc1p1()
     # test_run_mc1p2()
-    test_run_mc1p3()
+    # test_run_mc1p3()
+    test_run_mc1p4()
