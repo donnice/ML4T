@@ -92,6 +92,13 @@ def compute_daily_returns(df):
     daily_returns.ix[0, :] = 0
     return daily_returns
 
+def fill_missing_values(df_data):
+    """Fill missing values in data frame, in place."""
+    df_data.fillna(method="ffill", inplace=True) # forward fill
+    df_data.fillna(method="bfill", inplace=True) # backward fill
+    
+    return df_data
+
 def test_run_mc1p1():
     df = pd.read_csv("data/AAPL.csv")
     # Print the last 5 rows of the data frame
@@ -292,8 +299,23 @@ def test_run_mc1p4():
     daily_returns = compute_daily_returns(df)
     plot_data(daily_returns)
 
+def test_run_mc1p5():
+    symbollist=["FAKE2"]
+    # date range
+    start_date='2005-12-31'
+    end_date='2014-12-07'
+    # create date range
+    idx = pd.date_range(start_date, end_date)
+    df_data=get_data(symbollist, idx)
+    #get adjusted close of each symbol
+    fill_missing_values(df_data)
+    
+    plot_data(df_data)
+
+
 if __name__ == '__main__':
     # test_run_mc1p1()
     # test_run_mc1p2()
     # test_run_mc1p3()
-    test_run_mc1p4()
+    # test_run_mc1p4()
+    test_run_mc1p5()
