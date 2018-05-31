@@ -41,7 +41,7 @@ def normalize_data(df):
     #df.ix[0, :] will give us the first row
     return df / df.ix[0, :]
 
-def plot_data(df, title="Stock prices"):
+def plot_data(df, title="Stock prices", ylabel="Price", xlabel="Date"):
     '''Plot stock prices'''
     ax = df.plot(title=title, fontsize=8)
     ax.set_xlabel("Date")
@@ -312,10 +312,49 @@ def test_run_mc1p5():
     
     plot_data(df_data)
 
+def test_run_mc1p6():
+    # Read data
+    dates = pd.date_range('2009-01-01', '2012-12-31')
+    symbols = ['SPY', 'XOM', 'GLD']
+    df = get_data(symbols, dates)
+    # plot_data(df)
+
+    # Compute daily return
+    daily_returns = compute_daily_returns(df)
+    # plot_data(daily_returns, title="Daily returns", ylabel="Daily returns", xlabel="Days")
+
+    # Plot a histogram
+    # daily_returns.hist(bins=20)
+    # daily_returns['SPY'].hist(bins=20, label='SPY')
+    # daily_returns['XOM'].hist(bins=20, label='XOM')
+
+    # Get mean and standard deviation
+    # mean = daily_returns['SPY'].mean()
+    # print "mean=", mean
+    # std = daily_returns['SPY'].std()
+    # print "std=", std
+
+    # verticle line
+    # plt.axvline(mean, color='w', linestyle='dashed', linewidth=2) # mean line
+    # plt.axvline(std, color='r', linestyle='dashed', linewidth=2) # standard deviation line
+    # plt.axvline(-std, color='r', linestyle='dashed', linewidth=2) # standard deviation line
+
+    # Scatter plot SPY vs XOM
+    daily_returns.plot(kind='scatter', x='SPY', y='XOM')
+    # alpha means how well it performs with x value
+    beta_XOM, alpha_XOM = np.polyfit(daily_returns['SPY'], daily_returns['XOM'], 1) # make x and y fit a line
+    plt.plot(daily_returns['SPY'], beta_XOM*daily_returns['SPY']+alpha_XOM, '-', color='r')
+    
+    # daily_returns.plot(kind='scatter', x='SPY', y='GLD')
+    plt.show()
+
+    # Calculate correlation coefficient
+    print daily_returns.corr(method='pearson')
 
 if __name__ == '__main__':
     # test_run_mc1p1()
     # test_run_mc1p2()
     # test_run_mc1p3()
     # test_run_mc1p4()
-    test_run_mc1p5()
+    # test_run_mc1p5()
+    test_run_mc1p6()
